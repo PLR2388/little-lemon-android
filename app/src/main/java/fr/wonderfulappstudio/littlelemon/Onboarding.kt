@@ -1,5 +1,6 @@
 package fr.wonderfulappstudio.littlelemon
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,21 +24,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Onboarding() {
+fun Onboarding(navigateToHome: () -> Unit) {
     var firstName by remember {
         mutableStateOf("")
     }
@@ -47,6 +52,9 @@ fun Onboarding() {
     var email by remember {
         mutableStateOf("")
     }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
 
     Scaffold(topBar = {
@@ -59,7 +67,25 @@ fun Onboarding() {
         }, modifier = Modifier.fillMaxWidth())
     }, bottomBar = {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                if (email.isBlank() || lastName.isBlank() || firstName.isBlank()) {
+                    Toast.makeText(
+                        context,
+                        "Registration unsuccessful. Please enter all data.",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    scope.launch {
+                        context.dataStore.edit { settings ->
+                            settings[FIRST_NAME] = firstName
+                            settings[LAST_NAME] = lastName
+                            settings[EMAIL] = email
+                            settings[IS_LOGGING] = true
+                        }
+                    }
+                    navigateToHome()
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -123,5 +149,5 @@ fun Onboarding() {
 @Preview
 @Composable
 fun OnboardingPreview() {
-    Onboarding()
+    Onboarding({})
 }
