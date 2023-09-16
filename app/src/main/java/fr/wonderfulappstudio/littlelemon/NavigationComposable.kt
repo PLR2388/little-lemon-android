@@ -50,10 +50,14 @@ fun Navigation(navHostController: NavHostController) {
             }
         }
         composable(Home.route) {
-            Home()
+            Home {
+                navHostController.navigate(Profile.route)
+            }
         }
         composable(Profile.route) {
-            Profile()
+            Profile {
+                navHostController.navigate(Onboarding.route)
+            }
         }
     }
 }
