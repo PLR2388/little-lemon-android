@@ -1,6 +1,7 @@
 package fr.wonderfulappstudio.littlelemon.ui.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -13,12 +14,16 @@ import fr.wonderfulappstudio.littlelemon.R
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun LittleLemonTopBar() {
-    CenterAlignedTopAppBar(title = {
-        Image(
-            modifier = Modifier.height(50.dp),
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "Logo",
-        )
-    }, modifier = Modifier.fillMaxWidth())
+fun LittleLemonTopBar(actions: @Composable RowScope.() -> Unit = {}) {
+    CenterAlignedTopAppBar(
+        title = {
+            Image(
+                modifier = Modifier.height(50.dp),
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Logo",
+            )
+        },
+        modifier = Modifier.fillMaxWidth(),
+        actions = actions
+    )
 }

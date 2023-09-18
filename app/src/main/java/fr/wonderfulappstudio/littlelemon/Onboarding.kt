@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.edit
 import fr.wonderfulappstudio.littlelemon.ui.composable.LittleLemonMainButton
 import fr.wonderfulappstudio.littlelemon.ui.composable.LittleLemonTopBar
+import fr.wonderfulappstudio.littlelemon.ui.theme.darkGreen
 import fr.wonderfulappstudio.littlelemon.ui.theme.mediumPadding
 import fr.wonderfulappstudio.littlelemon.ui.theme.smallPadding
 import kotlinx.coroutines.launch
@@ -83,7 +84,7 @@ fun Onboarding(navigateToHome: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(100.dp)
-                        .background(Color(0xFF496E57)),
+                        .background(darkGreen),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import fr.wonderfulappstudio.littlelemon.ui.theme.yellow
 
 @Composable
 fun LittleLemonMainButton(text: String, onClick: () -> Unit) {
@@ -19,7 +20,7 @@ fun LittleLemonMainButton(text: String, onClick: () -> Unit) {
             .fillMaxWidth()
             .padding(16.dp),
         shape = RoundedCornerShape(4.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF4CE14))
+        colors = ButtonDefaults.buttonColors(containerColor = yellow)
     ) {
         Text(text, color = Color.Black)
     }
