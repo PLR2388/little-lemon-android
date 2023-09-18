@@ -1,6 +1,8 @@
 package fr.wonderfulappstudio.littlelemon
 
 import android.os.Bundle
+import android.os.Debug
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
@@ -29,8 +31,13 @@ class MainActivity : ComponentActivity() {
     }
 
     private suspend fun getMenuItems(): MenuNetwork {
-        return client.get("https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu.json")
-            .body()
+        return try {
+            client.get("https://raw.githubusercontent.com/Meta-Mobile-Developer-PC/Working-With-Data-API/main/menu.json")
+                .body()
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Failed to getMenuItems $e")
+            MenuNetwork(emptyList());
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

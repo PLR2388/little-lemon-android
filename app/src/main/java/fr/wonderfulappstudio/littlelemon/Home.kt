@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -51,7 +50,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.capitalize
 import fr.wonderfulappstudio.littlelemon.ui.theme.tinyPadding
 import java.util.Locale
 
@@ -91,7 +89,7 @@ fun Home(navigateToProfile: () -> Unit) {
     } else {
         menuItems.filter { it.category == chooseCategory }
     }
-    
+
     Scaffold(topBar = {
         LittleLemonTopBar {
             IconButton(
