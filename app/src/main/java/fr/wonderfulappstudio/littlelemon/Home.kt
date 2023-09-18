@@ -12,14 +12,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,16 +48,50 @@ import fr.wonderfulappstudio.littlelemon.ui.theme.darkGreen
 import fr.wonderfulappstudio.littlelemon.ui.theme.smallPadding
 import fr.wonderfulappstudio.littlelemon.ui.theme.yellow
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.capitalize
+import fr.wonderfulappstudio.littlelemon.ui.theme.tinyPadding
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(navigateToProfile: () -> Unit) {
     val context = LocalContext.current
-    val menuItems by LittleLemonDatabase.getDatabase(context).menuItemDao().getMenuItems()
+    val menuItemsDatabase by LittleLemonDatabase.getDatabase(context).menuItemDao().getMenuItems()
         .observeAsState(
             emptyList()
         )
 
+    var searchPhrase: String by remember {
+        mutableStateOf("")
+    }
+
+    var categories: List<String> by remember(key1 = menuItemsDatabase) {
+        mutableStateOf(menuItemsDatabase.map { it.category }.toSet().toList())
+    }
+
+    var chooseCategory: String by remember {
+        mutableStateOf("")
+    }
+
+    var menuItems: List<MenuItem> by remember {
+        mutableStateOf(menuItemsDatabase)
+    }
+
+    menuItems = if (searchPhrase.isNotBlank()) {
+        menuItemsDatabase.filter { it.title.contains(searchPhrase, ignoreCase = true) }
+    } else {
+        menuItemsDatabase
+    }
+
+    menuItems = if (chooseCategory.isBlank()) {
+        menuItems
+    } else {
+        menuItems.filter { it.category == chooseCategory }
+    }
+    
     Scaffold(topBar = {
         LittleLemonTopBar {
             IconButton(
@@ -104,13 +145,71 @@ fun Home(navigateToProfile: () -> Unit) {
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(smallPadding))
+                    TextField(
+                        value = searchPhrase,
+                        onValueChange = { searchPhrase = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("Enter Search Phrase") },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = null
+                            )
+                        }
+                    )
                 }
+            }
+            item {
+                MenuCategories(
+                    categories = categories,
+                    selectedChip = chooseCategory,
+                    onChipSelected = {
+                        if (it == chooseCategory) {
+                            chooseCategory = ""
+                        } else {
+                            chooseCategory = it
+                        }
+                    })
             }
             items(menuItems, key = { it.id }) {
                 MenuItem(menuItem = it)
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MenuCategories(
+    categories: List<String>,
+    selectedChip: String,
+    onChipSelected: (String) -> Unit
+) {
+    Column(modifier = Modifier.padding(vertical = smallPadding, horizontal = smallPadding)) {
+        Text("ORDER FOR DELIVERY!", fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(smallPadding))
+        LazyRow {
+            items(categories) {
+                FilterChip(
+                    selected = selectedChip == it,
+                    onClick = { onChipSelected(it) },
+                    label = {
+                        Text(
+                            text = it.capitalize(Locale.ENGLISH)
+                        )
+                    },
+                    modifier = Modifier.padding(horizontal = tinyPadding)
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MenuCategoriesPreview() {
+    MenuCategories(categories = listOf("Test", "Test1"), selectedChip = "Test", onChipSelected = {})
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -131,9 +230,11 @@ fun MenuItem(menuItem: MenuItem) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("$${menuItem.price}")
             }
-            GlideImage(model = menuItem.image, contentDescription = null, modifier = Modifier
-                .weight(0.2f)
-                .size(50.dp))
+            GlideImage(
+                model = menuItem.image, contentDescription = null, modifier = Modifier
+                    .weight(0.2f)
+                    .size(50.dp)
+            )
         }
 
     }
@@ -142,14 +243,16 @@ fun MenuItem(menuItem: MenuItem) {
 @Preview(showBackground = true)
 @Composable
 fun MenuItemPreview() {
-    MenuItem(menuItem = MenuItem(
-        1,
-        "Greek Salad",
-        "The famous greek salad of crispy lettuce, peppers, olives, our Chicago.",
-        "10",
-        "https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/greekSalad.jpg?raw=true",
-        "starters"
-    ))
+    MenuItem(
+        menuItem = MenuItem(
+            1,
+            "Greek Salad",
+            "The famous greek salad of crispy lettuce, peppers, olives, our Chicago.",
+            "10",
+            "https://github.com/Meta-Mobile-Developer-PC/Working-With-Data-API/blob/main/images/greekSalad.jpg?raw=true",
+            "starters"
+        )
+    )
 }
 
 @Preview(uiMode = UI_MODE_NIGHT_YES)
