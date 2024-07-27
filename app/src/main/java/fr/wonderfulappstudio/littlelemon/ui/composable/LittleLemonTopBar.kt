@@ -14,7 +14,7 @@ import fr.wonderfulappstudio.littlelemon.R
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun LittleLemonTopBar(actions: @Composable RowScope.() -> Unit = {}) {
+fun LittleLemonTopBar(actions: @Composable RowScope.() -> Unit = {}, navigationIcon: @Composable () -> Unit = {}) {
     CenterAlignedTopAppBar(
         title = {
             Image(
@@ -24,6 +24,7 @@ fun LittleLemonTopBar(actions: @Composable RowScope.() -> Unit = {}) {
             )
         },
         modifier = Modifier.fillMaxWidth(),
-        actions = actions
+        actions = actions,
+        navigationIcon = navigationIcon
     )
 }

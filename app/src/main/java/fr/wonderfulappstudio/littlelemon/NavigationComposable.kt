@@ -55,8 +55,10 @@ fun Navigation(navHostController: NavHostController) {
             }
         }
         composable(Profile.route) {
-            Profile {
+            Profile(navigateToOnboarding = {
                 navHostController.navigate(Onboarding.route)
+            }) {
+                navHostController.popBackStack()
             }
         }
     }
